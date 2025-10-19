@@ -1,7 +1,7 @@
-import fp from "fastify-plugin";
+import fp from 'fastify-plugin';
 
 async function tokenProcessor(fastify, opts) {
-  fastify.addHook("preHandler", async (request, reply) => {
+  fastify.addHook('preHandler', async (request, reply) => {
     try {
       // Get tokensService from DI container
       const { tokensService } = fastify.diContainer.cradle;
@@ -11,7 +11,7 @@ async function tokenProcessor(fastify, opts) {
 
       request.user = null;
 
-      if (authHeader && authHeader.startsWith("Bearer ")) {
+      if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.substring(7); // Remove "Bearer " prefix
         const payload = tokensService.verifyAccessToken(token);
         request.user = payload;
@@ -25,5 +25,5 @@ async function tokenProcessor(fastify, opts) {
 }
 
 export default fp(tokenProcessor, {
-  name: "token-processor",
+  name: 'token-processor',
 });

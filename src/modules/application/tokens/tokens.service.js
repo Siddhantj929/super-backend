@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import JWT_CONSTANTS from "./tokens.constants.js";
+import jwt from 'jsonwebtoken';
+import JWT_CONSTANTS from './tokens.constants.js';
 
 class TokensService {
   generateAccessToken(payload) {
