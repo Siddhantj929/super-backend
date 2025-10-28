@@ -1,11 +1,9 @@
-import dotenv from 'dotenv';
+import { connect as connectDB } from './src/database/index.js';
 import server from './src/server/index.js';
-
-// Load environment variables
-dotenv.config();
 
 const start = async () => {
   try {
+    await connectDB();
     const port = process.env.PORT || 3000;
     const host = process.env.HOST || '0.0.0.0';
 
