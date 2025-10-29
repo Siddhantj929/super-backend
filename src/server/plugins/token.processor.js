@@ -1,23 +1,33 @@
 import fp from 'fastify-plugin';
+import { CACHE_KEYS } from '../../modules/application/users/users.constants.js';
 
 async function tokenProcessor(fastify, opts) {
   fastify.addHook('preHandler', async (request, reply) => {
     try {
-      // Get tokensService from DI container
-      const { tokensService } = fastify.diContainer.cradle;
-
-      // Extract token from Authorization header
+      const { tokensService, usersService, cacheService } = fastify.diContainer.cradle;
       const authHeader = request.headers.authorization;
 
       request.user = null;
 
       if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.substring(7); // Remove "Bearer " prefix
+        const token = authHeader.substring(7);
         const payload = tokensService.verifyAccessToken(token);
-        request.user = payload;
+
+        if (payload && payload._id) {
+          // Normalize ID to string for cache key consistency
+          const userId = typeof payload._id === 'string' ? payload._id : payload._id.toString();
+          const cacheKey = CACHE_KEYS.SINGLE(userId);
+          let user = await cacheService.get(cacheKey);
+
+          if (!user) {
+            user = await usersService.getUserById(userId);
+            if (user) await cacheService.set(cacheKey, user, 600);
+          }
+
+          request.user = user;
+        }
       }
     } catch (error) {
-      // If verification fails or any other error, set user to null
       request.user = null;
       fastify.log.error(error.message || error.stack);
     }

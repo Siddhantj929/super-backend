@@ -1,4 +1,5 @@
-import { SORT_ORDER, SORT_FIELDS } from './roles.constants.js';
+import { SORT_ORDER, SORT_FIELDS, CACHE_KEYS, CACHE_PATTERNS } from './roles.constants.js';
+import { notFound } from '../../../utils/http-errors.js';
 
 export default class RolesController {
   constructor({ rolesService, cacheService }) {
@@ -20,9 +21,17 @@ export default class RolesController {
       sortOrder = SORT_ORDER.DESC,
     } = request.query;
 
-    const cacheKey = `roles:list:${page}:${limit}:${status || 'all'}:${
-      businessId || 'all'
-    }:${searchTerm || 'all'}:${dateFrom || 'all'}:${dateTo || 'all'}:${sortBy}:${sortOrder}`;
+    const cacheKey = CACHE_KEYS.LIST(
+      page,
+      limit,
+      status,
+      businessId,
+      searchTerm,
+      dateFrom,
+      dateTo,
+      sortBy,
+      sortOrder
+    );
 
     let roles = await this.cacheService.get(cacheKey);
 
@@ -50,25 +59,21 @@ export default class RolesController {
     return reply.send(roles);
   }
 
-  // GET /roles/:id - Get role by ID
   async getRoleById(request, reply) {
     const { id } = request.params;
-    const cacheKey = `roles:single:${id}`;
+    const cacheKey = CACHE_KEYS.SINGLE(id);
 
     let role = await this.cacheService.get(cacheKey);
 
     if (!role) {
       role = await this.rolesService.getRoleById(id);
-      if (!role) {
-        return reply.status(404).send({ error: 'Role not found' });
-      }
+      if (!role) throw notFound('Role not found');
       await this.cacheService.set(cacheKey, role, 600);
     }
 
     return reply.send(role);
   }
 
-  // POST /roles - Create new role
   async createRole(request, reply) {
     const roleData = request.body;
     const role = await this.rolesService.createRole(roleData);
@@ -77,68 +82,59 @@ export default class RolesController {
 
     setImmediate(async () => {
       try {
-        await this.cacheService.deletePattern('roles:list:*');
+        await this.cacheService.deletePattern(CACHE_PATTERNS.LIST);
       } catch (error) {
         console.error('Cache invalidation failed for role creation:', error);
       }
     });
   }
 
-  // PATCH /roles/:id - Update role by ID
   async updateRole(request, reply) {
     const { id } = request.params;
     const updateData = request.body;
     const role = await this.rolesService.updateRole(id, updateData);
-    if (!role) {
-      return reply.status(404).send({ error: 'Role not found' });
-    }
+    if (!role) throw notFound('Role not found');
 
     reply.send(role);
 
     setImmediate(async () => {
       try {
-        await this.cacheService.delete(`roles:single:${id}`);
-        await this.cacheService.deletePattern('roles:list:*');
+        await this.cacheService.delete(CACHE_KEYS.SINGLE(id));
+        await this.cacheService.deletePattern(CACHE_PATTERNS.LIST);
       } catch (error) {
         console.error('Cache invalidation failed for role update:', error);
       }
     });
   }
 
-  // DELETE /roles/:id - Delete role by ID
   async deleteRole(request, reply) {
     const { id } = request.params;
     const deleted = await this.rolesService.deleteRole(id);
-    if (!deleted) {
-      return reply.status(404).send({ error: 'Role not found' });
-    }
+    if (!deleted) throw notFound('Role not found');
 
     reply.status(204).send();
 
     setImmediate(async () => {
       try {
-        await this.cacheService.delete(`roles:single:${id}`);
-        await this.cacheService.deletePattern('roles:list:*');
+        await this.cacheService.delete(CACHE_KEYS.SINGLE(id));
+        await this.cacheService.deletePattern(CACHE_PATTERNS.LIST);
       } catch (error) {
         console.error('Cache invalidation failed for role deletion:', error);
       }
     });
   }
 
-  // PATCH /roles/:id/disable - Disable role by ID
   async disableRole(request, reply) {
     const { id } = request.params;
     const role = await this.rolesService.disableRole(id);
-    if (!role) {
-      return reply.status(404).send({ error: 'Role not found' });
-    }
+    if (!role) throw notFound('Role not found');
 
     reply.send(role);
 
     setImmediate(async () => {
       try {
-        await this.cacheService.delete(`roles:single:${id}`);
-        await this.cacheService.deletePattern('roles:list:*');
+        await this.cacheService.delete(CACHE_KEYS.SINGLE(id));
+        await this.cacheService.deletePattern(CACHE_PATTERNS.LIST);
       } catch (error) {
         console.error('Cache invalidation failed for role disable:', error);
       }
@@ -157,9 +153,15 @@ export default class RolesController {
       sortOrder = SORT_ORDER.DESC,
     } = request.query;
 
-    const cacheKey = `roles:business:${businessId}:${page}:${limit}:${status || 'all'}:${
-      searchTerm || 'all'
-    }:${sortBy}:${sortOrder}`;
+    const cacheKey = CACHE_KEYS.BUSINESS(
+      businessId,
+      page,
+      limit,
+      status,
+      searchTerm,
+      sortBy,
+      sortOrder
+    );
 
     let roles = await this.cacheService.get(cacheKey);
 
@@ -195,9 +197,16 @@ export default class RolesController {
       sortOrder = SORT_ORDER.DESC,
     } = request.query;
 
-    const cacheKey = `roles:created-by:${userId}:${page}:${limit}:${status || 'all'}:${
-      businessId || 'all'
-    }:${searchTerm || 'all'}:${sortBy}:${sortOrder}`;
+    const cacheKey = CACHE_KEYS.CREATED_BY(
+      userId,
+      page,
+      limit,
+      status,
+      businessId,
+      searchTerm,
+      sortBy,
+      sortOrder
+    );
 
     let roles = await this.cacheService.get(cacheKey);
 
@@ -221,39 +230,33 @@ export default class RolesController {
     return reply.send(roles);
   }
 
-  // GET /roles/name/:name - Get role by name
   async getRoleByName(request, reply) {
     const { name } = request.params;
-    const cacheKey = `roles:name:${name}`;
+    const cacheKey = CACHE_KEYS.NAME(name);
 
     let role = await this.cacheService.get(cacheKey);
 
     if (!role) {
       role = await this.rolesService.getRoleByName(name);
-      if (!role) {
-        return reply.status(404).send({ error: 'Role not found' });
-      }
+      if (!role) throw notFound('Role not found');
       await this.cacheService.set(cacheKey, role, 600);
     }
 
     return reply.send(role);
   }
 
-  // PATCH /roles/:id/permissions - Update role permissions
   async updateRolePermissions(request, reply) {
     const { id } = request.params;
     const { permissions } = request.body;
     const role = await this.rolesService.updateRolePermissions(id, permissions);
-    if (!role) {
-      return reply.status(404).send({ error: 'Role not found' });
-    }
+    if (!role) throw notFound('Role not found');
 
     reply.send(role);
 
     setImmediate(async () => {
       try {
-        await this.cacheService.delete(`roles:single:${id}`);
-        await this.cacheService.deletePattern('roles:list:*');
+        await this.cacheService.delete(CACHE_KEYS.SINGLE(id));
+        await this.cacheService.deletePattern(CACHE_PATTERNS.LIST);
       } catch (error) {
         console.error('Cache invalidation failed for role permissions update:', error);
       }
@@ -272,9 +275,15 @@ export default class RolesController {
       sortOrder = SORT_ORDER.DESC,
     } = request.query;
 
-    const cacheKey = `roles:permission:${permission}:${page}:${limit}:${status || 'all'}:${
-      businessId || 'all'
-    }:${sortBy}:${sortOrder}`;
+    const cacheKey = CACHE_KEYS.PERMISSION(
+      permission,
+      page,
+      limit,
+      status,
+      businessId,
+      sortBy,
+      sortOrder
+    );
 
     let roles = await this.cacheService.get(cacheKey);
 

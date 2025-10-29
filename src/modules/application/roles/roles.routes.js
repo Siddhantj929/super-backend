@@ -16,62 +16,86 @@ import {
 
 async function rolesRoutes(fastify, opts) {
   // GET /roles - Get all roles
-  fastify.get('/roles', { ...getAllRoles, handler: controller('rolesController', 'getAllRoles') });
+  fastify.get('/roles', {
+    schema: { ...getAllRoles },
+    handler: controller('rolesController', 'getAllRoles'),
+  });
 
   // GET /roles/:id - Get role by ID
   fastify.get('/roles/:id', {
-    ...getRoleById,
+    schema: {
+      ...getRoleById,
+    },
     handler: controller('rolesController', 'getRoleById'),
   });
 
   // POST /roles - Create new role
-  fastify.post('/roles', { ...createRole, handler: controller('rolesController', 'createRole') });
+  fastify.post('/roles', {
+    schema: { ...createRole },
+    handler: controller('rolesController', 'createRole'),
+  });
 
   // PATCH /roles/:id - Update role by ID
   fastify.patch('/roles/:id', {
-    ...updateRole,
+    schema: {
+      ...updateRole,
+    },
     handler: controller('rolesController', 'updateRole'),
   });
 
   // DELETE /roles/:id - Delete role by ID
   fastify.delete('/roles/:id', {
-    ...deleteRole,
+    schema: {
+      ...deleteRole,
+    },
     handler: controller('rolesController', 'deleteRole'),
   });
 
   // PATCH /roles/:id/disable - Disable role by ID
   fastify.patch('/roles/:id/disable', {
-    ...disableRole,
+    schema: {
+      ...disableRole,
+    },
     handler: controller('rolesController', 'disableRole'),
   });
 
   // GET /roles/business/:businessId - Get roles by business ID
   fastify.get('/roles/business/:businessId', {
-    ...getRolesByBusinessId,
+    schema: {
+      ...getRolesByBusinessId,
+    },
     handler: controller('rolesController', 'getRolesByBusinessId'),
   });
 
   // GET /roles/created-by/:userId - Get roles created by user
   fastify.get('/roles/created-by/:userId', {
-    ...getRolesByCreatedBy,
+    schema: {
+      ...getRolesByCreatedBy,
+    },
     handler: controller('rolesController', 'getRolesByCreatedBy'),
   });
 
   // GET /roles/name/:name - Get role by name
   fastify.get('/roles/name/:name', {
-    ...getRoleByName,
+    schema: {
+      ...getRoleByName,
+    },
     handler: controller('rolesController', 'getRoleByName'),
   });
 
   // PATCH /roles/:id/permissions - Update role permissions
   fastify.patch('/roles/:id/permissions', {
-    ...updateRolePermissions,
+    schema: {
+      ...updateRolePermissions,
+    },
     handler: controller('rolesController', 'updateRolePermissions'),
   });
 
   // GET /roles/permission/:permission - Get roles with specific permission
   fastify.get('/roles/permission/:permission', {
-    ...getRolesByPermission,
+    schema: {
+      ...getRolesByPermission,
+    },
     handler: controller('rolesController', 'getRolesByPermission'),
   });
 }

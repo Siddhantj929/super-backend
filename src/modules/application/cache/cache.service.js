@@ -1,12 +1,15 @@
 import Redis from 'ioredis';
-import { REDIS_CONFIG, CACHE_TTL } from './cache.constants.js';
+import { REDIS_CONFIG, REDIS_OPTIONS, CACHE_TTL } from './cache.constants.js';
 
 export default class CacheService {
   constructor() {
-    this.client = new Redis(REDIS_CONFIG);
+    this.client = new Redis(REDIS_CONFIG, REDIS_OPTIONS);
 
     this.client.on('error', error => console.error('Redis Client Error:', error));
-    this.client.on('connect', () => console.log('✓ Redis connected'));
+    this.client.on('connect', () => {
+      this.client.flushall();
+      console.log('✓ Redis connected');
+    });
   }
 
   async get(key) {

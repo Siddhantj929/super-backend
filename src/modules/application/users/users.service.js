@@ -1,9 +1,10 @@
+import mongoose from 'mongoose';
 import User from './users.model.js';
 import { USER_STATUS, SORT_ORDER, SORT_FIELDS } from './users.constants.js';
 
 export default class UsersService {
-  constructor() {
-    // No dependencies needed for now
+  constructor({ rolesService }) {
+    this.rolesService = rolesService;
   }
 
   // Get all users with filtering and pagination
@@ -90,7 +91,35 @@ export default class UsersService {
 
   // Get user by ID
   async getUserById(id) {
-    return await User.findById(id).populate('role', 'name permissions').select('-password').lean();
+    // Try to find user with string ID first (most common case)
+    let user = await User.findById(id)
+      .populate('role', 'name permissions')
+      .select('-password')
+      .lean();
+
+    // If not found and the ID is a valid ObjectId string, try with ObjectId format
+    // This handles legacy users that have ObjectId instead of string _id
+    if (!user && mongoose.Types.ObjectId.isValid(id)) {
+      const objectId = new mongoose.Types.ObjectId(id);
+
+      // Query the raw collection to bypass Mongoose type conversion
+      const rawUser = await User.collection.findOne({ _id: objectId });
+
+      if (rawUser) {
+        // Manually populate the role and format the response
+        const role = await this.rolesService.getRoleById(rawUser.role);
+
+        // Remove password and format user object
+        const { password, ...userWithoutPassword } = rawUser;
+        user = {
+          ...userWithoutPassword,
+          _id: rawUser._id.toString(), // Convert ObjectId to string for consistency
+          role: role ? { name: role.name, permissions: role.permissions } : rawUser.role,
+        };
+      }
+    }
+
+    return user;
   }
 
   // Create new user

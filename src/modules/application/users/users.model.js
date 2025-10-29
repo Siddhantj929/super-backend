@@ -4,6 +4,10 @@ import { USER_STATUS } from './users.constants.js';
 
 const userSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
     firstName: {
       type: String,
       required: true,
@@ -142,7 +146,7 @@ userSchema.index({ email: 1 });
 userSchema.index({ status: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ createdAt: -1 });
-userSchema.index({ 'address.location': '2dsphere' });
+userSchema.index({ 'address.location': '2dsphere' }, { sparse: true });
 
 const User = mongoose.model('User', userSchema);
 

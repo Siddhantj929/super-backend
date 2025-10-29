@@ -5,9 +5,21 @@ import { ROLE_STATUS } from '../roles.constants.js';
 
 const ROLES = [
   {
+    name: 'Guest',
+    status: ROLE_STATUS.ACTIVE,
+    permissions: [
+      // Auth - Login only
+      'POST /auth/login/email-password',
+      'GET /docs*',
+    ],
+  },
+  {
     name: 'User',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Basic user profile access
       'GET /users/me',
       'PATCH /users/me',
@@ -18,6 +30,9 @@ const ROLES = [
     name: 'BusinessEmployee',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Self management
       'GET /users/me',
       'PATCH /users/me',
@@ -36,6 +51,9 @@ const ROLES = [
     name: 'BusinessManager',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Everything BusinessEmployee has
       'GET /users/me',
       'PATCH /users/me',
@@ -59,6 +77,9 @@ const ROLES = [
     name: 'BusinessAdmin',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Full business user management
       'GET /users/me',
       'PATCH /users/me',
@@ -88,6 +109,9 @@ const ROLES = [
     name: 'SuperEmployee',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // View all users across all businesses
       'GET /users/me',
       'PATCH /users/me',
@@ -105,12 +129,47 @@ const ROLES = [
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',
+      // Orders (view and manage, no delete)
+      'GET /orders',
+      'GET /orders/me',
+      'PATCH /orders/me/:id',
+      'PATCH /orders/me/:id/disable',
+      'GET /orders/customer/:customerId',
+      'GET /orders/status/:status',
+      'GET /orders/:id',
+      'POST /orders',
+      'PATCH /orders/:id',
+      'PATCH /orders/:id/disable',
+      // Payments (view and manage, no delete)
+      'GET /payments',
+      'GET /payments/me',
+      'PATCH /payments/me/:id',
+      'GET /payments/order/:orderId',
+      'GET /payments/type/:type',
+      'GET /payments/:id',
+      'POST /payments',
+      'PATCH /payments/:id',
+      // Products (view and manage, no delete)
+      'GET /products',
+      'GET /products/me',
+      'PATCH /products/me/:id',
+      'PATCH /products/me/:id/disable',
+      'GET /products/category/:categoryName',
+      'GET /products/created-by/:userId',
+      'GET /products/status/:status',
+      'GET /products/:id',
+      'POST /products',
+      'PATCH /products/:id',
+      'PATCH /products/:id/disable',
     ],
   },
   {
     name: 'SuperManager',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Read and update users across the system
       'GET /users/me',
       'PATCH /users/me',
@@ -136,12 +195,49 @@ const ROLES = [
       'PATCH /roles/:id',
       'PATCH /roles/:id/disable',
       'PATCH /roles/:id/permissions',
+      // Orders (full access including delete)
+      'GET /orders',
+      'GET /orders/me',
+      'PATCH /orders/me/:id',
+      'PATCH /orders/me/:id/disable',
+      'GET /orders/customer/:customerId',
+      'GET /orders/status/:status',
+      'GET /orders/:id',
+      'POST /orders',
+      'PATCH /orders/:id',
+      'DELETE /orders/:id',
+      'PATCH /orders/:id/disable',
+      // Payments (full access)
+      'GET /payments',
+      'GET /payments/me',
+      'PATCH /payments/me/:id',
+      'GET /payments/order/:orderId',
+      'GET /payments/type/:type',
+      'GET /payments/:id',
+      'POST /payments',
+      'PATCH /payments/:id',
+      // Products (full access including delete)
+      'GET /products',
+      'GET /products/me',
+      'PATCH /products/me/:id',
+      'PATCH /products/me/:id/disable',
+      'GET /products/category/:categoryName',
+      'GET /products/created-by/:userId',
+      'GET /products/status/:status',
+      'GET /products/:id',
+      'POST /products',
+      'PATCH /products/:id',
+      'DELETE /products/:id',
+      'PATCH /products/:id/disable',
     ],
   },
   {
     name: 'SuperAdmin',
     status: ROLE_STATUS.ACTIVE,
     permissions: [
+      // Auth
+      'POST /auth/refresh',
+      'POST /auth/logout',
       // Full access to all users
       'GET /users/me',
       'PATCH /users/me',
@@ -171,6 +267,40 @@ const ROLES = [
       'PATCH /roles/:id/disable',
       'PATCH /roles/:id/permissions',
       'DELETE /roles/:id',
+      // Orders (full access including delete)
+      'GET /orders',
+      'GET /orders/me',
+      'PATCH /orders/me/:id',
+      'PATCH /orders/me/:id/disable',
+      'GET /orders/customer/:customerId',
+      'GET /orders/status/:status',
+      'GET /orders/:id',
+      'POST /orders',
+      'PATCH /orders/:id',
+      'DELETE /orders/:id',
+      'PATCH /orders/:id/disable',
+      // Payments (full access)
+      'GET /payments',
+      'GET /payments/me',
+      'PATCH /payments/me/:id',
+      'GET /payments/order/:orderId',
+      'GET /payments/type/:type',
+      'GET /payments/:id',
+      'POST /payments',
+      'PATCH /payments/:id',
+      // Products (full access including delete)
+      'GET /products',
+      'GET /products/me',
+      'PATCH /products/me/:id',
+      'PATCH /products/me/:id/disable',
+      'GET /products/category/:categoryName',
+      'GET /products/created-by/:userId',
+      'GET /products/status/:status',
+      'GET /products/:id',
+      'POST /products',
+      'PATCH /products/:id',
+      'DELETE /products/:id',
+      'PATCH /products/:id/disable',
     ],
   },
 ];

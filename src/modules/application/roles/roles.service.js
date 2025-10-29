@@ -219,7 +219,7 @@ export default class RolesService {
   async getRoleByName(name) {
     return await Role.findOne({ name })
       .populate('createdBy', 'firstName lastName email')
-      .populate('businessId', 'name')
+      // .populate('businessId', 'name')
       .lean();
   }
 

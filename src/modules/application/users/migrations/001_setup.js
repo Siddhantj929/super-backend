@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import User from '../users.model.js';
 import Role from '../../roles/roles.model.js';
 import { connect } from '../../../../database/index.js';
@@ -92,6 +93,18 @@ async function runMigration() {
     await connect();
     console.log('Connected to database');
 
+    // Drop old non-sparse geolocation index if it exists
+    try {
+      await User.collection.dropIndexes();
+      console.log('Dropped old indexes');
+    } catch (error) {
+      if (error.code === 27) {
+        console.log('Geolocation index does not exist, skipping drop');
+      } else {
+        throw error;
+      }
+    }
+
     // Get all roles
     const roles = await Role.find({});
     const roleMap = new Map(roles.map(role => [role.name, role._id]));
@@ -101,7 +114,7 @@ async function runMigration() {
     const bulkOps = [];
 
     for (const userData of USERS) {
-      const { roleName, ...userFields } = userData;
+      const { roleName, password, ...userFields } = userData;
       const roleId = roleMap.get(roleName);
 
       if (!roleId) {
@@ -109,12 +122,17 @@ async function runMigration() {
         continue;
       }
 
+      // Hash password manually since bulkWrite bypasses pre-save hooks
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
       bulkOps.push({
         updateOne: {
           filter: { email: userData.email },
           update: {
             $set: {
               ...userFields,
+              password: hashedPassword,
               role: roleId,
             },
           },
