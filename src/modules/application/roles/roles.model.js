@@ -32,11 +32,6 @@ const roleSchema = new mongoose.Schema(
         message: 'All permissions must be non-empty strings',
       },
     },
-    businessId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Business',
-      default: null,
-    },
   },
   {
     timestamps: true,
@@ -46,7 +41,6 @@ const roleSchema = new mongoose.Schema(
 // Indexes for better query performance
 roleSchema.index({ status: 1 });
 roleSchema.index({ createdBy: 1 });
-roleSchema.index({ businessId: 1 });
 roleSchema.index({ createdAt: -1 });
 
 const Role = mongoose.model('Role', roleSchema);

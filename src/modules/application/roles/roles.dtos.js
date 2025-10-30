@@ -10,7 +10,6 @@ export const getAllRoles = {
       page: { type: 'integer', minimum: 1, default: 1 },
       limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
       status: { type: 'string', enum: Object.values(ROLE_STATUS) },
-      businessId: { type: 'string' },
       searchTerm: { type: 'string' },
       dateFrom: { type: 'string', format: 'date' },
       dateTo: { type: 'string', format: 'date' },
@@ -48,7 +47,6 @@ export const createRole = {
         items: { type: 'string' },
         default: [],
       },
-      businessId: { type: 'string' },
     },
     required: ['name', 'createdBy'],
   },
@@ -74,7 +72,6 @@ export const updateRole = {
         type: 'array',
         items: { type: 'string' },
       },
-      businessId: { type: 'string' },
     },
   },
 };
@@ -105,30 +102,6 @@ export const disableRole = {
   },
 };
 
-// GET /roles/business/:businessId - Get roles by business ID
-export const getRolesByBusinessId = {
-  summary: 'Get roles by business ID',
-  tags: ['Roles'],
-  params: {
-    type: 'object',
-    properties: {
-      businessId: { type: 'string' },
-    },
-    required: ['businessId'],
-  },
-  querystring: {
-    type: 'object',
-    properties: {
-      page: { type: 'integer', minimum: 1, default: 1 },
-      limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-      status: { type: 'string', enum: Object.values(ROLE_STATUS) },
-      searchTerm: { type: 'string' },
-      sortBy: { type: 'string', default: SORT_FIELDS.CREATED_AT },
-      sortOrder: { type: 'string', enum: Object.values(SORT_ORDER), default: SORT_ORDER.DESC },
-    },
-  },
-};
-
 // GET /roles/created-by/:userId - Get roles created by user
 export const getRolesByCreatedBy = {
   summary: 'Get roles created by user',
@@ -146,7 +119,6 @@ export const getRolesByCreatedBy = {
       page: { type: 'integer', minimum: 1, default: 1 },
       limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
       status: { type: 'string', enum: Object.values(ROLE_STATUS) },
-      businessId: { type: 'string' },
       searchTerm: { type: 'string' },
       sortBy: { type: 'string', default: SORT_FIELDS.CREATED_AT },
       sortOrder: { type: 'string', enum: Object.values(SORT_ORDER), default: SORT_ORDER.DESC },
@@ -207,7 +179,6 @@ export const getRolesByPermission = {
       page: { type: 'integer', minimum: 1, default: 1 },
       limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
       status: { type: 'string', enum: Object.values(ROLE_STATUS) },
-      businessId: { type: 'string' },
       sortBy: { type: 'string', default: SORT_FIELDS.CREATED_AT },
       sortOrder: { type: 'string', enum: Object.values(SORT_ORDER), default: SORT_ORDER.DESC },
     },

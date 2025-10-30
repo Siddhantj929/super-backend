@@ -43,7 +43,6 @@ const ROLES = [
       // View roles
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/name/:name',
     ],
   },
@@ -67,7 +66,6 @@ const ROLES = [
       // Role viewing
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',
@@ -96,7 +94,6 @@ const ROLES = [
       // Role management within business
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',
@@ -125,7 +122,6 @@ const ROLES = [
       // View all roles
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',
@@ -187,7 +183,6 @@ const ROLES = [
       // Manage all roles
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',
@@ -258,7 +253,6 @@ const ROLES = [
       // Full access to all roles
       'GET /roles',
       'GET /roles/:id',
-      'GET /roles/business/:businessId',
       'GET /roles/created-by/:userId',
       'GET /roles/name/:name',
       'GET /roles/permission/:permission',

@@ -13,7 +13,6 @@ export default class RolesController {
       page = 1,
       limit = 10,
       status,
-      businessId,
       searchTerm,
       dateFrom,
       dateTo,
@@ -25,7 +24,6 @@ export default class RolesController {
       page,
       limit,
       status,
-      businessId,
       searchTerm,
       dateFrom,
       dateTo,
@@ -40,7 +38,6 @@ export default class RolesController {
         page: parseInt(page),
         limit: parseInt(limit),
         status,
-        businessId,
         searchTerm,
         dateRange: {
           from: dateFrom,
@@ -141,49 +138,6 @@ export default class RolesController {
     });
   }
 
-  // GET /roles/business/:businessId - Get roles by business ID
-  async getRolesByBusinessId(request, reply) {
-    const { businessId } = request.params;
-    const {
-      page = 1,
-      limit = 10,
-      status,
-      searchTerm,
-      sortBy = SORT_FIELDS.CREATED_AT,
-      sortOrder = SORT_ORDER.DESC,
-    } = request.query;
-
-    const cacheKey = CACHE_KEYS.BUSINESS(
-      businessId,
-      page,
-      limit,
-      status,
-      searchTerm,
-      sortBy,
-      sortOrder
-    );
-
-    let roles = await this.cacheService.get(cacheKey);
-
-    if (!roles) {
-      const filters = {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        status,
-        searchTerm,
-        sort: {
-          field: sortBy,
-          order: sortOrder,
-        },
-      };
-
-      roles = await this.rolesService.getRolesByBusinessId(businessId, filters);
-      await this.cacheService.set(cacheKey, roles, 300);
-    }
-
-    return reply.send(roles);
-  }
-
   // GET /roles/created-by/:userId - Get roles created by user
   async getRolesByCreatedBy(request, reply) {
     const { userId } = request.params;
@@ -191,7 +145,6 @@ export default class RolesController {
       page = 1,
       limit = 10,
       status,
-      businessId,
       searchTerm,
       sortBy = SORT_FIELDS.CREATED_AT,
       sortOrder = SORT_ORDER.DESC,
@@ -202,7 +155,6 @@ export default class RolesController {
       page,
       limit,
       status,
-      businessId,
       searchTerm,
       sortBy,
       sortOrder
@@ -215,7 +167,6 @@ export default class RolesController {
         page: parseInt(page),
         limit: parseInt(limit),
         status,
-        businessId,
         searchTerm,
         sort: {
           field: sortBy,
@@ -270,20 +221,11 @@ export default class RolesController {
       page = 1,
       limit = 10,
       status,
-      businessId,
       sortBy = SORT_FIELDS.CREATED_AT,
       sortOrder = SORT_ORDER.DESC,
     } = request.query;
 
-    const cacheKey = CACHE_KEYS.PERMISSION(
-      permission,
-      page,
-      limit,
-      status,
-      businessId,
-      sortBy,
-      sortOrder
-    );
+    const cacheKey = CACHE_KEYS.PERMISSION(permission, page, limit, status, sortBy, sortOrder);
 
     let roles = await this.cacheService.get(cacheKey);
 
@@ -292,7 +234,6 @@ export default class RolesController {
         page: parseInt(page),
         limit: parseInt(limit),
         status,
-        businessId,
         sort: {
           field: sortBy,
           order: sortOrder,

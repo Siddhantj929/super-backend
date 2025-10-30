@@ -24,6 +24,8 @@ async function tokenProcessor(fastify, opts) {
             if (user) await cacheService.set(cacheKey, user, 600);
           }
 
+          console.log('user', user);
+
           request.user = user;
         }
       }

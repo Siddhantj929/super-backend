@@ -7,7 +7,6 @@ import {
   updateRole,
   deleteRole,
   disableRole,
-  getRolesByBusinessId,
   getRolesByCreatedBy,
   getRoleByName,
   updateRolePermissions,
@@ -57,14 +56,6 @@ async function rolesRoutes(fastify, opts) {
       ...disableRole,
     },
     handler: controller('rolesController', 'disableRole'),
-  });
-
-  // GET /roles/business/:businessId - Get roles by business ID
-  fastify.get('/roles/business/:businessId', {
-    schema: {
-      ...getRolesByBusinessId,
-    },
-    handler: controller('rolesController', 'getRolesByBusinessId'),
   });
 
   // GET /roles/created-by/:userId - Get roles created by user
