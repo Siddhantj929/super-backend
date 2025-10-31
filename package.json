@@ -34,10 +34,10 @@
     "script:dev": "node --env-file=.env.dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "module:create": "node scripts/module.create.js",
-    "route:create": "node scripts/route.create.js",
-    "migration:create": "node scripts/migration.create.js",
-    "migration:run:prod": "node --env-file=.env scripts/migration.run.js",
-    "migration:run:dev": "node --env-file=.env.dev scripts/migration.run.js"
+    "module:create": "node src/scripts/module.create.js",
+    "route:create": "node src/scripts/route.create.js",
+    "migration:create": "node src/scripts/migration.create.js",
+    "migration:run:prod": "node --env-file=.env src/scripts/migration.run.js",
+    "migration:run:dev": "node --env-file=.env.dev src/scripts/migration.run.js"
   }
 }

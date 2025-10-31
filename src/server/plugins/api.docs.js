@@ -17,6 +17,10 @@ async function apiDocs(fastify, opts) {
           url: 'http://localhost:3000',
           description: 'Development server',
         },
+        {
+          url: 'https://super-backend-5hxn.onrender.com',
+          description: 'Staging server',
+        },
       ],
       components: {
         securitySchemes: {
@@ -35,11 +39,9 @@ async function apiDocs(fastify, opts) {
   await fastify.register(fastifyScalar, {
     routePrefix: '/docs',
     configuration: {
-      theme: 'purple',
-      layout: 'modern',
       darkMode: true,
       defaultHttpClient: {
-        targetKey: 'javascript',
+        targetKey: 'js',
         clientKey: 'fetch',
       },
       hideDownloadButton: false,
